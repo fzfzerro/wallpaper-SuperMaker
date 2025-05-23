@@ -1,12 +1,47 @@
 const express = require('express');
 const { Pool } = require('pg');
-const cors = require('cors'); // Import cors
+const cors = require('cors');
+const multer = require('multer'); // For file uploads
+const path = require('path');   // For path manipulation
+const fs = require('fs');       // For file system operations (like creating directories)
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors()); // Enable CORS for all origins
-app.use(express.json()); // Enable JSON request body parsing
+app.use(cors());
+app.use(express.json());
+
+// --- Multer Configuration for Template Frame Image Uploads ---
+const UPLOAD_DIR = 'uploads/template_frames/';
+
+// Ensure upload directory exists
+if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, UPLOAD_DIR);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const imageFileFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
+    } else {
+        cb(new Error('Not an image! Please upload only images.'), false);
+    }
+};
+
+const upload = multer({ storage: storage, fileFilter: imageFileFilter, limits: { fileSize: 1024 * 1024 * 5 } }); // 5MB limit
+
+// Serve uploaded images statically
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // PostgreSQL Pool setup
 const pool = new Pool({
@@ -33,12 +68,26 @@ app.get('/', (req, res) => {
 // --- API Endpoints for Mockup Templates ---
 
 // POST /api/templates - Create a new template
-app.post('/api/templates', async (req, res) => {
-  const { name, description, image_url, screen_x, screen_y, screen_width, screen_height, css_class } = req.body;
+// Now uses upload.single('templateImage') for file upload
+app.post('/api/templates', upload.single('templateImage'), async (req, res) => {
+  // Handle multer errors explicitly if any
+  if (req.fileValidationError) {
+    return res.status(400).json({ error: req.fileValidationError });
+  }
+  if (!req.file) {
+    // This case might occur if the file filter rejected the file, or no file was sent.
+    // If 'templateImage' is optional, this check might need adjustment.
+    // For now, assume 'templateImage' is required.
+    return res.status(400).json({ error: 'Template image file is required.' });
+  }
 
-  // Basic validation
-  if (!name || !image_url || !css_class) {
-    return res.status(400).json({ error: 'Missing required fields: name, image_url, css_class' });
+  const { name, description, screen_x, screen_y, screen_width, screen_height, css_class } = req.body;
+  const image_url = `/uploads/template_frames/${req.file.filename}`; // Path to the uploaded file
+
+  // Basic validation for other fields
+  if (!name || !css_class) {
+    // image_url is now handled by multer, so remove from this check if it was there
+    return res.status(400).json({ error: 'Missing required fields: name, css_class' });
   }
 
   const query = `
