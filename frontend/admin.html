@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Template Management</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <header>
+        <h1>Admin: Upload New Mockup Template</h1>
+    </header>
+    <main>
+        <form id="upload-template-form">
+            <div>
+                <label for="name">Template Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="description">Description:</label>
+                <textarea id="description" name="description"></textarea>
+            </div>
+            <div>
+                <label for="templateImage">Template Image (Device Frame):</label>
+                <input type="file" id="templateImage" name="templateImage" required accept="image/*">
+            </div>
+            <div>
+                <label for="screen_x">Screen X (px):</label>
+                <input type="number" id="screen_x" name="screen_x" required placeholder="e.g., 50">
+            </div>
+            <div>
+                <label for="screen_y">Screen Y (px):</label>
+                <input type="number" id="screen_y" name="screen_y" required placeholder="e.g., 100">
+            </div>
+            <div>
+                <label for="screen_width">Screen Width (px):</label>
+                <input type="number" id="screen_width" name="screen_width" required placeholder="e.g., 400">
+            </div>
+            <div>
+                <label for="screen_height">Screen Height (px):</label>
+                <input type="number" id="screen_height" name="screen_height" required placeholder="e.g., 300">
+            </div>
+            <div>
+                <label for="css_class">CSS Class (for frontend styling):</label>
+                <input type="text" id="css_class" name="css_class" required placeholder="e.g., phone-dark-large">
+            </div>
+            <button type="submit">Upload Template</button>
+        </form>
+        <div id="message-area"></div>
+    </main>
+    <script src="js/admin.js"></script>
+</body>
+</html>

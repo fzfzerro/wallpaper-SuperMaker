@@ -1,0 +1,132 @@
+:root {
+    --color1: #FF0000;
+    --color2: #00FF00;
+    --color3: #0000FF;
+    --color4: #FFFF00;
+    --color5: #FF00FF;
+    --menu-opacity: 0.42;
+}
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background-color: var(--color1);
+    color: white;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+main {
+    flex-grow: 1;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-template-rows: auto auto;
+    gap: 1rem;
+    grid-template-areas:
+        "controls display"
+        "templates display"
+        "upload display";
+}
+
+#mockup-display-area {
+    grid-area: display;
+    border: 2px solid var(--color2);
+    min-height: 400px;
+    background-color: white;
+    display: flex; /* Remains useful for centering if no content is absolutely positioned, or for fallback */
+    justify-content: center; /* As above */
+    align-items: center; /* As above */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    overflow: hidden;
+    position: relative; /* Crucial for absolute positioning of child wallpaper */
+    background-size: contain; /* Or cover, depending on frame image aspect ratios */
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+#mockup-wallpaper-image {
+    /* object-fit is now set by JS in positionWallpaper */
+    /* max-width and max-height are removed; dimensions are set by JS */
+    display: none; /* Initially hidden, made visible by JS */
+    /* position: absolute; top, left, width, height will be set by JS */
+}
+
+/* Template-specific styles */
+.active-template-template1 {
+    background-color: #e0e0e0; /* Light grey background */
+    border: 5px dashed var(--color4); /* Dashed yellow border */
+}
+
+.active-template-template2 {
+    background-color: #d0d0d0; /* Darker grey background */
+    border: 5px dotted var(--color5); /* Dotted magenta border */
+}
+
+.active-template-no-border {
+    background-color: #f0f0f0; /* Very light grey background */
+    border: none; /* No border */
+}
+
+
+#template-selection-area {
+    grid-area: templates;
+    background-color: white;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+#customization-controls-area {
+    grid-area: controls;
+    background-color: white;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+#image-upload-area {
+    grid-area: upload;
+    background-color: white;
+    padding: 1rem;
+    border: 1px solid #ddd;
+}
+
+/* Placeholder styles for buttons and inputs */
+button {
+    background-color: var(--color3);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+input[type="file"],
+input[type="color"],
+input[type="range"] {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+input[type="color"] {
+    width: 50px; /* Adjust as needed */
+    height: 30px; /* Adjust as needed */
+}
